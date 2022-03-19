@@ -58,8 +58,8 @@ public class User extends PasswordProtection{
 	public boolean addUser(Scanner sc)
 	{
 		System.out.print("Enter userName: ");
-		String userName = sc.nextLine();
-		
+		String userName = sc.next();
+		sc.nextLine();
 		if(PasswordProtection.allCredentials.get(userName)!=null)
 		{
 			System.out.println("!!!!!!!User already exists!!!!!!!");
@@ -69,7 +69,7 @@ public class User extends PasswordProtection{
 		{
 			System.out.print("\n-->Password must not contain any whitespaces.\nSet Password: ");
 			String password = sc.next();
-			
+			sc.nextLine();
 			this.addCredentials(userName, password);
 			
 			
@@ -84,11 +84,13 @@ public class User extends PasswordProtection{
 	public boolean propmptCredentials(Scanner sc)
 	{
 		System.out.print("Enter userName: ");
-		String userName = sc.nextLine();
+		String userName = sc.next();
+		sc.nextLine();
 		if(PasswordProtection.allCredentials.get(userName) != null)
 		{
 			System.out.print("Enter password: ");
 			String password= sc.next();
+			sc.nextLine();
 			return this.validateCredentials(userName, password);
 		}
 		else
