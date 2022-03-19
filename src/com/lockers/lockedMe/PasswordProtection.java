@@ -14,12 +14,13 @@ import java.util.TreeMap;
 
 public abstract class PasswordProtection{
 
-	protected static Map<String, String> allCredentials = new Hashtable<>();
+	protected static Map<String, String> allCredentials = new TreeMap<>();
 	private static File credentialFile = new File("credentials.properties");
 	private static FileOutputStream fOutStream;
 	private static FileInputStream fInStream; 
 	private static Properties config = new Properties();
 
+//	Static initializer block
 	static{
 		//	creating the file to store credentials if it doesnt exist
 		if (!PasswordProtection.credentialFile.exists())
@@ -55,8 +56,6 @@ public abstract class PasswordProtection{
 
 			//			uncomment below line to see that allCredentials are initialized
 			//			System.out.println(allCredentials);
-
-
 		}
 
 		//	initializing file output stream object with the credential file
@@ -84,7 +83,6 @@ public abstract class PasswordProtection{
 			try {
 				config.store(fOutStream, null);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -102,6 +100,7 @@ public abstract class PasswordProtection{
 	{
 		if(allCredentials.get(userName).equals(password))
 		{
+			System.out.println("******************Login Successful******************");
 			return true;
 		}
 		else
@@ -110,7 +109,19 @@ public abstract class PasswordProtection{
 			return false;
 		}
 	}
-
+	
+//	removes credentials of a particular user
+	public void deleteCredentials(String userName)
+	{
+		config.remove(userName);
+		try {
+			
+			config.store(fOutStream, null);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 
 }

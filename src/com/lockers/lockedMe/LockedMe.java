@@ -20,9 +20,10 @@ public class LockedMe {
 
 		User u1 = new User(sc);
 		
-		//		uncomment below line to see if user is valid
-		//		System.out.println(u1.isValidUser());
-
+		if(u1.isValidUser())
+		{
+			u1.deleteUser();
+		}
 
 
 		//		closing the scanner object before the main method ends
