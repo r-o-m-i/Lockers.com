@@ -1,11 +1,9 @@
 package com.lockers.lockedMe;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,82 +12,54 @@ import java.util.TreeMap;
 
 public abstract class PasswordProtection{
 
-	protected static Map<String, String> allCredentials = new TreeMap<>();
-	private static File credentialFile = new File("credentials.properties");
-	private static FileOutputStream fOutStream;
-	private static FileInputStream fInStream; 
-	private static Properties config = new Properties();
+	 protected File securityFile;//location of credentials file
+	 protected FileWriter writer;
+	 protected FileReader reader; 
+	 protected Properties credentials;//properties object to handle properties file
+	 protected Map<String, String> securityMap = new TreeMap<>();
 
-//	Static initializer block
-	static{
-		//	creating the file to store credentials if it doesnt exist
-		if (!PasswordProtection.credentialFile.exists())
+	public PasswordProtection() {
+		this.securityFile = new File("security.properties");
+		try
 		{
-			try {
-				boolean created = PasswordProtection.credentialFile.createNewFile();
-				//				uncomment below code to get notified if new credentials file is created
-				//				System.out.println("\n**********************************************");
-				//				System.out.println("New Credentials File Created: " + created);
-				//				System.out.println("**********************************************\n");	
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		else
-		{			
-			//			initializing input file stream
-			try {
-				fInStream = new FileInputStream(credentialFile);
-				config.load(fInStream);
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			Iterator<Entry<Object, Object>> i = config.entrySet().iterator();
-
-			while(i.hasNext())
+			this.reader = new FileReader(securityFile);			
+			this.credentials = new Properties();
+			this.credentials.load(reader);
+			
+			if(!this.securityFile.exists())
 			{
-				Entry<Object, Object> entry = i.next();
-				allCredentials.put((String)(entry.getKey()), (String)(entry.getValue()));
+				System.out.println("Security File Created");
+				this.securityFile.createNewFile();
 			}
-
-			//			uncomment below line to see that allCredentials are initialized
-			//			System.out.println(allCredentials);
+			else
+			{
+				Iterator<Entry<Object, Object>> itr = this.credentials.entrySet().iterator();
+				
+				while(itr.hasNext())
+				{
+					Entry<Object, Object> entry = itr.next();
+					securityMap.put((String)entry.getKey(), (String)entry.getValue());
+				}
+			}
+			this.writer = new FileWriter(securityFile);
 		}
-
-		//	initializing file output stream object with the credential file
-		try {
-			fOutStream = new FileOutputStream(credentialFile,true);
-		} 
-		catch (Exception e) {
-			e.printStackTrace();
+		catch(Exception e)
+		{
+			System.out.println(e);
 		}
-
-
-
 	}
-
 
 	//	adds new credentials to the credential file
 
 	public void addCredentials(String userName, String password) {
 
-		if(allCredentials.get(userName) == null)
+		if(securityMap.containsKey(userName))
 		{
-			allCredentials.put(userName, password);
-
-			config.put(userName, password);
-			try {
-				config.store(fOutStream, null);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
+			System.out.println("!!!!!!!!!!!User already exists!!!!!!!!!!!");
 		}
 		else
 		{
-			System.out.println("!!!!!!!!!!!User already exists!!!!!!!!!!!");
+			securityMap.put(userName, password);
 		}
 
 	}
@@ -98,7 +68,7 @@ public abstract class PasswordProtection{
 
 	public boolean validateCredentials(String userName, String password)
 	{
-		if(allCredentials.get(userName).equals(password))
+		if(securityMap.get(userName).equals(password))
 		{
 			System.out.println("******************Login Successful******************");
 			return true;
@@ -109,19 +79,30 @@ public abstract class PasswordProtection{
 			return false;
 		}
 	}
-	
-//	removes credentials of a particular user
+
+	//	removes credentials of a particular user
 	public void deleteCredentials(String userName)
 	{
-		config.remove(userName);
+		securityMap.remove(userName);
+		updateCredentials();
+	}
+
+	public Properties getCredentials()
+	{
+		return credentials;
+	}
+	
+	public void updateCredentials() {
+		
 		try {
-			
-			config.store(fOutStream, null);
-			
+			this.credentials = new Properties();
+			this.credentials.load(reader);
+			credentials.putAll(securityMap);
+			this.writer = new FileWriter(securityFile);
+			credentials.store(writer, null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-
+	
 }

@@ -1,13 +1,11 @@
 package com.lockers.lockedMe;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Scanner;
 
 public class LockedMe {
 
 	public static void main(String[] args) {
-		
+
 		//		Welcome message
 		System.out.println("**********************************************");
 		System.out.println("Welcome to project \"LockedMe\" : ");
@@ -18,16 +16,20 @@ public class LockedMe {
 
 		Scanner sc = new Scanner(System.in);
 
+		//		creating a user object
+
 		User u1 = new User(sc);
-		
 		if(u1.isValidUser())
 		{
-			u1.deleteUser();
+	
+			//TODO code for when user is valid
+			
 		}
 
 
 		//		closing the scanner object before the main method ends
 		sc.close();
+		System.out.println("!!!!!!!!!!!!!!!!!End of program!!!!!!!!!!!!!!!!!");
 	}
 
 }
