@@ -2,28 +2,24 @@ package com.lockers.lockedMe;
 
 import java.util.Scanner;
 
+import com.lockers.lockedMe.User.validity;
+
 public class LockedMe {
 
 	public static void main(String[] args) {
 
-		//		Welcome message
-		System.out.println("**********************************************");
-		System.out.println("Welcome to project \"LockedMe\" : ");
-		System.out.println("Developed by: Lockers Pvt Ltd. \nDeveloper name: Rohit Goparaju");
-		System.out.println("**********************************************");
 
 		//		creating a scanner object for user input
-
 		Scanner sc = new Scanner(System.in);
 
 		//		creating a user object
 
 		User u1 = new User(sc);
-		if(u1.isValidUser())
+
+
+		if(u1.isValidUser() == validity.VALID)
 		{
-	
-			//TODO code for when user is valid
-			
+			u1.displayWelcome();
 		}
 
 
@@ -31,5 +27,8 @@ public class LockedMe {
 		sc.close();
 		System.out.println("!!!!!!!!!!!!!!!!!End of program!!!!!!!!!!!!!!!!!");
 	}
+	
+	
+	
 
 }
