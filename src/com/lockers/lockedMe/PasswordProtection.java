@@ -38,14 +38,14 @@ public abstract class PasswordProtection{
 				while(itr.hasNext())
 				{
 					Entry<Object, Object> entry = itr.next();
-					securityMap.put((String)entry.getKey(), (String)entry.getValue());
+					this.securityMap.put((String)entry.getKey(), (String)entry.getValue());
 				}
 			}
 			this.writer = new FileWriter(securityFile);
 		}
 		catch(Exception e)
 		{
-			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -53,22 +53,22 @@ public abstract class PasswordProtection{
 
 	public void addCredentials(String userName, String password) {
 
-		if(securityMap.containsKey(userName))
+		if(this.securityMap.containsKey(userName))
 		{
 			System.out.println("!!!!!!!!!!!User already exists!!!!!!!!!!!");
 		}
 		else
 		{
-			securityMap.put(userName, password);
+			this.securityMap.put(userName, password);
+			updateCredentials();
 		}
-
 	}
 
 	//	validates credentials provided by user
 
 	public boolean validateCredentials(String userName, String password)
 	{
-		if(securityMap.get(userName).equals(password))
+		if(this.securityMap.get(userName).equals(password))
 		{
 			System.out.println("******************Login Successful******************");
 			return true;
@@ -83,7 +83,8 @@ public abstract class PasswordProtection{
 	//	removes credentials of a particular user
 	public void deleteCredentials(String userName)
 	{
-		securityMap.remove(userName);
+		System.out.println("Deleting User: " + userName);
+		this.securityMap.remove(userName);
 		updateCredentials();
 	}
 
@@ -97,7 +98,14 @@ public abstract class PasswordProtection{
 		try {
 			this.credentials = new Properties();
 			this.credentials.load(reader);
-			credentials.putAll(securityMap);
+			if(securityMap.isEmpty())
+			{
+				credentials.clear();
+			}
+			else
+			{
+				credentials.putAll(securityMap);
+			}
 			this.writer = new FileWriter(securityFile);
 			credentials.store(writer, null);
 		} catch (IOException e) {

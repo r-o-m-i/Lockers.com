@@ -1,42 +1,64 @@
 package com.lockers.lockedMe;
 
 import java.io.File;
-import java.util.Scanner;
 
 public class User extends PasswordProtection implements UI{
 
-	public enum validity{VALID, INVALID, DOES_NOT_EXIST, ERROR};
-	
+	public enum validity{VALID, INVALID, DOES_NOT_EXIST, ERROR, EXIT};
+
 	private File userDir;
 	private validity validUser = validity.INVALID;
 	private String userName;
 
-	User(Scanner sc)
+
+	User()
 	{
 		super();
 
-		while(this.validUser != validity.VALID)
+		while(this.validUser != validity.VALID && this.validUser != validity.EXIT)
 		{
-			this.validUser = this.propmptCredentials(sc);
-			
+			this.validUser = this.propmptCredentials();
+
 			if(this.validUser == validity.DOES_NOT_EXIST)
 			{
-				System.out.println("!!!!!!!!!!!!Creating new user!!!!!!!!!!!!");
-				this.validUser = addUser(sc);
+				System.out.println("Do you want to create a new user?\n1. Yes\n2. No");
+				int userChoice;
+				boolean loopVar = true;
+				while(loopVar)
+				{
+					System.out.print("Enter your choice: ");
+					userChoice = LockedMe.sc.nextInt();
+					
+					if(userChoice == 1)
+					{
+						System.out.println("!!!!!!!!!!!!Creating new user!!!!!!!!!!!!");
+						this.validUser = addUser();
+						loopVar = false;
+					}
+					else if(userChoice == 2)
+					{
+						loopVar = false;
+						this.validUser = validity.EXIT;
+					}	
+					else
+					{
+						System.out.println("!!!!!!!!!!!!!!!!!Please enter a valid input!!!!!!!!!!!!!!!!!");
+					}
+				}
 			}
 			else if(this.validUser == validity.INVALID)
 			{
-				this.validUser = this.propmptCredentials(sc);
+				this.validUser = this.propmptCredentials();
 			}
-			else
+			else if(this.validUser == validity.ERROR)
 			{
 				System.out.println("!!!!!!!!!Error occurred!!!!!!!!!!!!!!");
 				break;
 			}
-				
+
 		}
+
 		
-		updateCredentials();
 	}
 
 	/////////////////////////////////////implementing UI/////////////////////////////////////////////
@@ -54,20 +76,55 @@ public class User extends PasswordProtection implements UI{
 
 	public void displayMenu()
 	{
+		//		menu of operations
+		System.out.println("1. Delete\n2. User Status");
 
+		int userInput;
+
+		boolean inputLoopVar = true;
+
+		while(inputLoopVar)
+		{
+			System.out.print("Enter your choice: ");
+			userInput =  LockedMe.sc.nextInt();
+
+			switch(userInput)
+			{
+			case 1: 
+				this.deleteUser();
+				inputLoopVar = false;
+				break;
+			case 2:
+				System.out.println(this.userName + " Directory exists at " + this.userDir.getAbsolutePath());
+				inputLoopVar = false;
+				break;
+			default: 
+				System.out.println("!!!!!!!!!!!!!!!!!!!!!!enter valid input!!!!!!!!!!!!!!!!!!!!!!");
+				break;
+
+			}
+
+		}
+
+	}
+
+
+	public void exitMessage()
+	{
+		System.out.println("!!!!!!!!!!!!!!!!!End of program!!!!!!!!!!!!!!!!!");
 	}
 
 
 	////////////////////////////////// User Functionality////////////////////////////////////////////
 
 	//	for new users adds the user and credentials to the server
-	private validity addUser(Scanner sc)
+	private validity addUser()
 	{	
 		System.out.println("New userName: " + this.userName);
 
 
 		System.out.print("Set Password: ");
-		String password = sc.next();
+		String password = LockedMe.sc.next();
 
 		this.userDir = new File("USER DIRECTORIES/" + this.userName );
 		boolean addStatus = this.userDir.mkdirs();
@@ -84,14 +141,14 @@ public class User extends PasswordProtection implements UI{
 	}
 
 	//	for existing user prompts and validates the entered credentials
-	private validity propmptCredentials(Scanner sc)
+	private validity propmptCredentials()
 	{
 		System.out.print("userName: ");
-		this.userName = sc.next();
+		this.userName = LockedMe.sc.next();
 		if(securityMap.containsKey(this.userName))
 		{
 			System.out.print("password: ");
-			String password= sc.next();
+			String password= LockedMe.sc.next();
 
 			this.userDir = new File("USER DIRECTORIES/" + this.userName );
 
