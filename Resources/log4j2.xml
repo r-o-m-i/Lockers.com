@@ -1,34 +1,42 @@
-<?xml version="1.1" encoding="UTF-8"?>
+<?xml  version = "1.1" encoding = "Utf-8" ?>
+<!--
+	*	You need log4j-api.jar as well as log4j-core.jar to use log4j
+	*	Make sure you add configuraion xml file as well as Resource folder to source folders path
+	*	also add log4j-api and log4j-core into the class path by right clicking on the project->BuildPath->configure build path->add to class path
+	*	make sure you change the package name when adding into the project
+-->
 <Configuration status = "WARN">
-<!-- setting properties-->
 	<Properties>
-	<!-- Logs will be stored in a folder named logs-->
-	<Property name = "filename">./logs</Property>
+	<!--Setting the file name to a new logs folder in current project directory-->
+		<property name = "filename">./logs</property> 
 	</Properties>
-<!-- Appenders section-->
 	<Appenders>
-		<!-- Console log Appender-->
-		<Console name = "console" target = "SYSTEM_OUT">
+		<!--Console appender -->
+		<Console name = "consoleAppender" target = "SYSTEM_OUT">
+			<!--Simply logs the message to the console-->
 			<PatternLayout pattern = "%msg%n"/>
 		</Console>
-		
-		<!-- File log Appender-->
-		<RollingFile name = "file" filePattern = "${filename}/On_%d{dd-MM-YYYY}_AT_%d{HH-mm-ss-sss}.log">
-			<PatternLayout pattern = "%d %level %logger %t %msg%n"/>
-			<SizeBasedTriggeringPolicy size = "20MB"/>
+		<!--File Appender-->
+		<RollingFile name = "fileAppender" filePattern = "${filename}/On_%d{dd-MM-YYYY}_AT_%d{HH-mm-ss-SSS}.log">
+			<!-- Logs all the details into the log file-->
+			<PatternLayout pattern = "[%d{dd/MMMM/yyy		HH:mm:ss}] --> [%level] --> [%logger] --> [%t] ---> %msg%n"/>		
+			<!--Max size of one file can be 20 MB before rolling over to the new file-->
+			<SizeBasedTriggeringPolicy size = "20 MB"/>
 		</RollingFile>
 	</Appenders>
-<!-- Loggers Section-->
 	<Loggers>
-	<!-- Root logger parent of all the loggers-->
+		<!--Root logger: Parent of all the loggers-->
 		<Root level = "trace">
-		<!-- Adding appender reference so that the Root logger can print to console-->
-			<AppenderRef ref = "console"/>
+			<!--Adding appender referece so that Root logger can log to consoleAppender-->
+			<AppenderRef ref = "consoleAppender"/>
 		</Root>
-	<!--logger for package "com.lockers.lockedMe", additivity is set to true so that Root logger can also print the logs-->
-		<Logger name = "com.lockers.lockedMe" level = "trace" additivity = "true" >
-		<!-- Adding appender reference so that the Root logger can print to file-->
-			<AppenderRef ref = "file"/>
+		<!-- 
+			Setting a custom logger for mypackage to log into log files
+			additivity allows the Root logger to log the same message to its appenders when set to "true"
+			change the package name when adding into a project
+		-->
+		<Logger name = "com.lockers.lockedMe" level = "trace" additivity = "true">
+		<AppenderRef ref = "fileAppender"/>
 		</Logger>
 	</Loggers>
 </Configuration>
