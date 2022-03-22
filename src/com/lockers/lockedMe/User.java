@@ -20,7 +20,7 @@ public class User extends PasswordProtection implements UI{
 			this.validUser = this.propmptCredentials();
 
 			if(this.validUser == validity.DOES_NOT_EXIST)
-			{
+			{		
 				System.out.println("Do you want to create a new user?\n1. Yes\n2. No");
 				int userChoice;
 				boolean loopVar = true;
@@ -28,10 +28,9 @@ public class User extends PasswordProtection implements UI{
 				{
 					System.out.print("Enter your choice: ");
 					userChoice = LockedMe.sc.nextInt();
-					
+
 					if(userChoice == 1)
 					{
-						System.out.println("!!!!!!!!!!!!Creating new user!!!!!!!!!!!!");
 						this.validUser = addUser();
 						loopVar = false;
 					}
@@ -58,7 +57,7 @@ public class User extends PasswordProtection implements UI{
 
 		}
 
-		
+
 	}
 
 	/////////////////////////////////////implementing UI/////////////////////////////////////////////
@@ -132,10 +131,19 @@ public class User extends PasswordProtection implements UI{
 		this.addCredentials(this.userName, password);
 
 		if(addStatus)
+		{
+			//			System.out.println("!!!!!!!!!!!!Creating new user!!!!!!!!!!!!");
+			LockedMe.logger.info("New User Created: " + this.userName);
 			return validity.VALID;
+		}
+		else if(this.userDir.exists())
+		{
+			LockedMe.logger.warn("User Directory already exists: " + this.userDir.getAbsolutePath());
+			return validity.VALID;
+		}
 		else
 		{
-			System.out.println("!!!!!!!!!!!!!!!Failed to create user directory!!!!!!!!!!!!!!!");
+			LockedMe.logger.fatal("Unable to create user directory for user: " + this.userName);
 			return validity.ERROR;
 		}
 	}
@@ -159,7 +167,8 @@ public class User extends PasswordProtection implements UI{
 		}
 		else
 		{
-			System.out.println("!!!!!!!!!!!User doesnot exist!!!!!!!!!!!");
+//			System.out.println("!!!!!!!!!!!User doesnot exist!!!!!!!!!!!");
+			LockedMe.logger.warn("User does not exist: " + this.userName);
 			return validity.DOES_NOT_EXIST;
 		}
 	}

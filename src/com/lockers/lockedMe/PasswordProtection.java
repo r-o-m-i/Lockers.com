@@ -12,10 +12,10 @@ import java.util.TreeMap;
 
 public abstract class PasswordProtection{
 
-	 protected File securityFile;//location of credentials file
-	 protected FileWriter writer;
-	 protected FileReader reader; 
-	 protected Properties credentials;//properties object to handle properties file
+	 private File securityFile;//location of credentials file
+	 private FileWriter writer;
+	 private FileReader reader; 
+	 private Properties credentials;//properties object to handle properties file
 	 protected Map<String, String> securityMap = new TreeMap<>();
 
 	public PasswordProtection() {
@@ -28,7 +28,8 @@ public abstract class PasswordProtection{
 			
 			if(!this.securityFile.exists())
 			{
-				System.out.println("Security File Created");
+//				System.out.println("Security File Created");
+				LockedMe.logger.info("Security File Created");
 				this.securityFile.createNewFile();
 			}
 			else
@@ -55,7 +56,8 @@ public abstract class PasswordProtection{
 
 		if(this.securityMap.containsKey(userName))
 		{
-			System.out.println("!!!!!!!!!!!User already exists!!!!!!!!!!!");
+//			System.out.println("!!!!!!!!!!!User already exists!!!!!!!!!!!");
+			LockedMe.logger.warn("!!!!!!!!!!!User already exists!!!!!!!!!!!");
 		}
 		else
 		{
@@ -70,12 +72,14 @@ public abstract class PasswordProtection{
 	{
 		if(this.securityMap.get(userName).equals(password))
 		{
-			System.out.println("******************Login Successful******************");
+//			System.out.println("******************Login Successful******************");
+			LockedMe.logger.info("Logged in as: " + userName);
 			return true;
 		}
 		else
 		{
-			System.out.println("!!!!!!!!Wrong Password!!!!!!!!");
+//			System.out.println("!!!!!!!!Wrong Password!!!!!!!!");
+			LockedMe.logger.warn("incorrect password for account: " + userName);
 			return false;
 		}
 	}
@@ -83,7 +87,8 @@ public abstract class PasswordProtection{
 	//	removes credentials of a particular user
 	public void deleteCredentials(String userName)
 	{
-		System.out.println("Deleting User: " + userName);
+//		System.out.println("Deleting User: " + userName);
+		LockedMe.logger.info("Deleting User: " + userName);
 		this.securityMap.remove(userName);
 		updateCredentials();
 	}
